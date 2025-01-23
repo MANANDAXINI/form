@@ -1,22 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-type CheckType = "doctor" | "patient";
-
-const SignUp: React.FC = () => {
-  const [usertype, setUsertype] = useState<CheckType>("doctor");
-  const [fullName, setFullName] = useState("");
+const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [position, setPosition] = useState(""); // Only for doctors
+  const [password, setPassword] = useState("");
+  const [usertype, setUsertype] = useState<"doctor" | "patient">("doctor");
   const navigate = useNavigate();
 
-  const handleSignUp = () => {
-    // Store usertype and other details in localStorage or context
-    localStorage.setItem("usertype", usertype);
+  const handleSignIn = () => {
+    // Simulate user authentication
+    const storedUserType = localStorage.getItem("usertype");
 
-    // Navigate to the Sign In page
-    navigate("/sign-in");
+    if (storedUserType === usertype) {
+      // Redirect to the respective dashboard based on user type
+      if (usertype === "doctor") {
+        navigate("/doctor-dashboard");
+      } else if (usertype === "patient") {
+        navigate("/patient-dashboard");
+      }
+    } else {
+      // Handle invalid usertype or authentication failure
+      alert("Invalid user type or credentials");
+    }
   };
 
   return (
@@ -37,13 +42,13 @@ const SignUp: React.FC = () => {
             className={`px-6 py-3 text-base font-semibold rounded-lg ${usertype === "doctor" ? "bg-[#3B9AB8] text-white" : "bg-gray-100 text-gray-600 border border-gray-300"}`}
             onClick={() => setUsertype("doctor")}
           >
-            Doctor Sign Up
+            Doctor Sign In
           </button>
           <button
             className={`px-6 py-3 text-base font-semibold rounded-lg ${usertype === "patient" ? "bg-[#3B9AB8] text-white" : "bg-gray-100 text-gray-600 border border-gray-300"}`}
             onClick={() => setUsertype("patient")}
           >
-            Patient Sign Up
+            Patient Sign In
           </button>
         </div>
 
@@ -51,63 +56,39 @@ const SignUp: React.FC = () => {
         <div className="bg-white shadow-lg w-full max-w-md p-8 rounded-lg">
           {usertype === "doctor" && (
             <div>
-              <h2 className="text-2xl font-semibold text-[#3B9AB8] mb-6">Doctor Sign-Up Form</h2>
+              <h2 className="text-2xl font-semibold text-[#3B9AB8] mb-6">Doctor Sign-In Form</h2>
               <form className="flex flex-col gap-4">
-                {/* Full Name field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Full Name</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Full Name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                </div>
-
                 {/* Email field */}
                 <div>
                   <label className="text-sm font-medium text-gray-600">Email</label>
                   <input
                     type="email"
-                    placeholder="Enter Your Email"
+                    placeholder="Enter your email"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
-                {/* Phone Number field */}
+                {/* Password field */}
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Phone Number</label>
+                  <label className="text-sm font-medium text-gray-600">Password</label>
                   <input
-                    type="text"
-                    placeholder="Enter Your Phone Number"
+                    type="password"
+                    placeholder="Enter your password"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
 
-                {/* Position field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Position</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Position (e.g., General Practitioner)"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={position}
-                    onChange={(e) => setPosition(e.target.value)}
-                  />
-                </div>
-
-                {/* Submit Button */}
+                {/* Sign In button */}
                 <button
                   type="button"
-                  onClick={handleSignUp}
+                  onClick={handleSignIn}
                   className="w-full h-12 bg-[#3B9AB8] text-white rounded-lg flex justify-center items-center"
                 >
-                  Sign Up as Doctor
+                  Sign In as Doctor
                 </button>
               </form>
             </div>
@@ -115,51 +96,39 @@ const SignUp: React.FC = () => {
 
           {usertype === "patient" && (
             <div>
-              <h2 className="text-2xl font-semibold text-[#3B9AB8] mb-6">Patient Sign-Up Form</h2>
+              <h2 className="text-2xl font-semibold text-[#3B9AB8] mb-6">Patient Sign-In Form</h2>
               <form className="flex flex-col gap-4">
-                {/* Full Name field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Full Name</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Full Name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                </div>
-
                 {/* Email field */}
                 <div>
                   <label className="text-sm font-medium text-gray-600">Email</label>
                   <input
                     type="email"
-                    placeholder="Enter Your Email"
+                    placeholder="Enter your email"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
-                {/* Phone Number field */}
+                {/* Password field */}
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Phone Number</label>
+                  <label className="text-sm font-medium text-gray-600">Password</label>
                   <input
-                    type="text"
-                    placeholder="Enter Your Phone Number"
+                    type="password"
+                    placeholder="Enter your password"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
 
-                {/* Submit Button */}
+                {/* Sign In button */}
                 <button
                   type="button"
-                  onClick={handleSignUp}
+                  onClick={handleSignIn}
                   className="w-full h-12 bg-[#3B9AB8] text-white rounded-lg flex justify-center items-center"
                 >
-                  Sign Up as Patient
+                  Sign In as Patient
                 </button>
               </form>
             </div>
@@ -170,4 +139,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;
