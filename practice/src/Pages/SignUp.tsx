@@ -9,14 +9,38 @@ const SignUp: React.FC = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [position, setPosition] = useState(""); // Only for doctors
+  const [password, setPassword] = useState(""); // Added password field
   const navigate = useNavigate();
 
-  const handleSignUp = () => {
-    // Store usertype and other details in localStorage or context
-    localStorage.setItem("usertype", usertype);
+  const handleSignUp = async () => {
+    try {
+      const payload = {
+        fullName,
+        email,
+        phone,
+        password, // Include password in the payload
+        ...(usertype === "doctor" && { position }),
+      };
 
-    // Navigate to the Sign In page
-    navigate("/sign-in");
+      const endpoint = usertype === "doctor" ? "/api/doctors/signup" : "/api/patients/signup";
+
+      const response = await fetch(`http://localhost:5000${endpoint}`, {  // Make sure to include the full URL for backend
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        localStorage.setItem("usertype", usertype);
+        navigate("/sign-in");
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.message}`);
+      }
+    } catch (err) {
+      console.error("Sign-up failed", err);
+      alert("Sign-up failed. Please try again.");
+    }
   };
 
   return (
@@ -49,121 +73,81 @@ const SignUp: React.FC = () => {
 
         {/* Form */}
         <div className="bg-white shadow-lg w-full max-w-md p-8 rounded-lg">
-          {usertype === "doctor" && (
+          <h2 className="text-2xl font-semibold text-[#3B9AB8] mb-6">
+            {usertype === "doctor" ? "Doctor Sign-Up Form" : "Patient Sign-Up Form"}
+          </h2>
+          <form className="flex flex-col gap-4">
+            {/* Full Name */}
             <div>
-              <h2 className="text-2xl font-semibold text-[#3B9AB8] mb-6">Doctor Sign-Up Form</h2>
-              <form className="flex flex-col gap-4">
-                {/* Full Name field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Full Name</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Full Name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                </div>
-
-                {/* Email field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Email</label>
-                  <input
-                    type="email"
-                    placeholder="Enter Your Email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-
-                {/* Phone Number field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Phone Number</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Phone Number"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </div>
-
-                {/* Position field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Position</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Position (e.g., General Practitioner)"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={position}
-                    onChange={(e) => setPosition(e.target.value)}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="button"
-                  onClick={handleSignUp}
-                  className="w-full h-12 bg-[#3B9AB8] text-white rounded-lg flex justify-center items-center"
-                >
-                  Sign Up as Doctor
-                </button>
-              </form>
+              <label className="text-sm font-medium text-gray-600">Full Name</label>
+              <input
+                type="text"
+                placeholder="Enter your full name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
             </div>
-          )}
 
-          {usertype === "patient" && (
+            {/* Email */}
             <div>
-              <h2 className="text-2xl font-semibold text-[#3B9AB8] mb-6">Patient Sign-Up Form</h2>
-              <form className="flex flex-col gap-4">
-                {/* Full Name field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Full Name</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Full Name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                </div>
-
-                {/* Email field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Email</label>
-                  <input
-                    type="email"
-                    placeholder="Enter Your Email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-
-                {/* Phone Number field */}
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Phone Number</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Phone Number"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="button"
-                  onClick={handleSignUp}
-                  className="w-full h-12 bg-[#3B9AB8] text-white rounded-lg flex justify-center items-center"
-                >
-                  Sign Up as Patient
-                </button>
-              </form>
+              <label className="text-sm font-medium text-gray-600">Email</label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
-          )}
+
+            {/* Phone */}
+            <div>
+              <label className="text-sm font-medium text-gray-600">Phone</label>
+              <input
+                type="text"
+                placeholder="Enter your phone number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+
+            {/* Position for Doctor */}
+            {usertype === "doctor" && (
+              <div>
+                <label className="text-sm font-medium text-gray-600">Position</label>
+                <input
+                  type="text"
+                  placeholder="Enter your position"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
+                />
+              </div>
+            )}
+
+            {/* Password */}
+            <div>
+              <label className="text-sm font-medium text-gray-600">Password</label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#54B9ED] focus:outline-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            {/* Sign Up button */}
+            <button
+              type="button"
+              onClick={handleSignUp}
+              className="w-full h-12 bg-[#3B9AB8] text-white rounded-lg flex justify-center items-center"
+            >
+              {`Sign Up as ${usertype.charAt(0).toUpperCase() + usertype.slice(1)}`}
+            </button>
+          </form>
         </div>
       </div>
     </div>
